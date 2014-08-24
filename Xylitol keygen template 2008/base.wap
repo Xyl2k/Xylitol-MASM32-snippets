@@ -1,0 +1,26 @@
+[PROJECT]
+Type=0
+ReleaseCommandLine=
+DebugCommandLine=
+AutoIncFileVersion=0
+RCSilent=0
+PellesTools=0
+
+[MAKE]
+CompileRC=/v
+RCToObj=
+Assemble=/c /coff /Cp /nologo
+Link=/SUBSYSTEM:WINDOWS /RELEASE /VERSION:4.0
+Out=
+ActiveBuild=0
+DebAssemble=/Zi /Zd /c /coff /Cp /nologo
+DebLink=/SUBSYSTEM:WINDOWS /DEBUG /DEBUGTYPE:CV /VERSION:4.0 /INCREMENTAL:NO
+DebOut=
+
+
+[FILES]
+1=base.asm
+2=base.rc
+[SHOWFILE]
+1=11010000C0000000B50500002E030000000000000300000000000000C0
+2=F2000000F20000009605000060030000010000000100000000000000E4
