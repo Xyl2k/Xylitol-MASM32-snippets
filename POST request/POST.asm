@@ -22,13 +22,14 @@ bufSize=MAX_COMPUTERNAME_LENGTH + 1
 .data
 format1     db 'computername=%s&username=%s',0
 capt        db 'Hello',0
-postdata    db 256 dup(?)
+postdata    db 100 dup(0)
+
 bSize dd bufSize
 computer_name db bufSize dup(?)
 user_name db bufSize dup(?)
 
 szData db 1024 dup(0)
-host db "localhost",0
+host db "requesttests.appspot.com",0
 ;postdata db "postString=sample+POST",0
 headers db 13,10,"Keep-Alive: 115",
 13,10,"Connection: keep-alive",
@@ -39,7 +40,7 @@ hInternet dd ?
 hConnect dd ?
 hRequest dd ?
 dwBytesRead dd ?
-
+postdatalen dd ?
 .code
 
 
@@ -48,8 +49,8 @@ main PROC
 invoke  GetComputerName,addr computer_name,addr bSize
 invoke 	GetUserName,addr user_name,addr bSize
 invoke  wsprintf,ADDR postdata,ADDR format1,ADDR computer_name,addr user_name
-
-;invoke  MessageBox,0,ADDR postdata,ADDR capt,MB_OK
+invoke lstrlen,addr postdata
+mov postdatalen,eax
 
 call SendReq
 invoke ExitProcess,0
@@ -69,13 +70,13 @@ mov hConnect,eax
         exit
     .endif
         
-mov hRequest,FUNC(HttpOpenRequest,hConnect,chr$("POST"),chr$("/post.php"),NULL,chr$("localhost/post.php"),0,INTERNET_FLAG_KEEP_CONNECTION,1)
+mov hRequest,FUNC(HttpOpenRequest,hConnect,chr$("POST"),chr$("/PostTester"),NULL,chr$("requesttests.appspot.com/PostTester"),0,INTERNET_FLAG_KEEP_CONNECTION,1)
     .if hRequest == NULL
         invoke MessageBox,0,chr$("HttpOpenRequest error"),0,0
         exit
     .endif        
 
-invoke HttpSendRequest,hRequest,offset headers,sizeof headers-1,offset postdata,sizeof postdata-1
+invoke HttpSendRequest,hRequest,offset headers,sizeof headers-1,offset postdata,postdatalen
 .if eax == 0
         invoke MessageBox,0,chr$("HttpSendRequest error"),0,0
         exit
