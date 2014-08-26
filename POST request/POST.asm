@@ -22,7 +22,6 @@ bufSize=MAX_COMPUTERNAME_LENGTH + 1
 
 .data
 format1     db 'computername=%s&username=%s',0
-capt        db 'Hello',0
 postdata    db 100 dup(0)
 
 bSize dd bufSize
