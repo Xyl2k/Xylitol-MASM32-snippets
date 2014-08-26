@@ -87,6 +87,7 @@ invoke InternetReadFile,hRequest,offset szData,sizeof szData-1,offset dwBytesRea
    .if dwBytesRead==0
         jmp @exit
     .endif
+    invoke OutputDebugString,chr$("Ok")
 
 @exit:                        
 invoke InternetCloseHandle,hRequest
