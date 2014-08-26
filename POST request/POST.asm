@@ -1,3 +1,5 @@
+; post.php: <?php echo htmlspecialchars($_POST['computername']); ?><br /><?php echo htmlspecialchars($_POST['username']); ?>
+
 .486                      
 .model flat, stdcall      
 option casemap :none      
@@ -16,7 +18,6 @@ includelib \masm32\lib\masm32.lib
 includelib \masm32\lib\wininet.lib
 includelib \masm32\lib\advapi32.lib
 
-
 bufSize=MAX_COMPUTERNAME_LENGTH + 1
 
 .data
@@ -30,7 +31,6 @@ user_name db bufSize dup(?)
 
 szData db 1024 dup(0)
 host db "localhost",0
-;postdata db "postString=sample+POST",0
 headers db 13,10,"Keep-Alive: 115",
 13,10,"Connection: keep-alive",
 13,10,"Content-Type: application/x-www-form-urlencoded",0
@@ -41,9 +41,8 @@ hConnect dd ?
 hRequest dd ?
 dwBytesRead dd ?
 postdatalen dd ?
+
 .code
-
-
 main PROC
 
 invoke  GetComputerName,addr computer_name,addr bSize
