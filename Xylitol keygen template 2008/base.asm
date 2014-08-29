@@ -40,6 +40,8 @@ DlgProc			PROTO :DWORD,:DWORD,:DWORD,:DWORD
 Aboutproc		PROTO :DWORD,:DWORD,:DWORD,:DWORD
 DoKey			PROTO :DWORD
 SetClipboard	PROTO :DWORD
+EditCustomCursor   proto:DWORD,:DWORD,:DWORD,:DWORD
+EditCustomCursor2  proto:DWORD,:DWORD,:DWORD,:DWORD
 
 icon			equ	1002
 IDC_OK 			equ	1003
@@ -69,6 +71,7 @@ NewPos				POINT		<>
 Rect				RECT		<>
 rect				RECT		<>
 rect2				RECT		<>
+szWinTitle	db	"RED Key Generator",0
 
 ;About Settings ###########################################################
 String   	db 'RED CReW',0Ah
@@ -150,11 +153,29 @@ dword_40E504	dd	?
 NameBuffer		db	100 dup(?)
 FinalSerial		db	100 dup(?)
 NameLen			dd	?
+OldWndProc	dd	?
+OldWndProc2	dd	?
 
+AllowSingleInstance MACRO lpTitle
+        invoke FindWindow,NULL,lpTitle
+        cmp eax, 0
+        je @F
+          push eax
+          invoke ShowWindow,eax,SW_RESTORE
+          pop eax
+          invoke SetForegroundWindow,eax
+          mov eax, 0
+          ret
+        @@:
+      ENDM
+      
 .code
 start:
 	invoke	GetModuleHandle, NULL
 	mov	hInstance, eax
+	AllowSingleInstance addr szWinTitle			;dont allow make multiple window
+	invoke LoadCursor,hInstance,200
+	mov hCursor,eax
 	invoke	DialogBoxParam, hInstance, 101, 0, ADDR DlgProc, 0
 	invoke	ExitProcess, eax
 ; -----------------------------------------------------------------------
@@ -171,7 +192,9 @@ local hOldSolidbrush:DWORD
 local ps:PAINTSTRUCT
 
 	.IF uMsg == WM_INITDIALOG
+	invoke SetWindowText,hWin,addr szWinTitle
 invoke uFMOD_PlaySong,IDC_MUSIC,hInstance,XM_RESOURCE
+
 invoke AnimateWindow,hWin,800,AW_CENTER	
 	invoke ImageButton,hWin,20,180,300,301,302,IDC_GENZ	;custom image button (JPG,BMP,PNG) Left,Up,DownID,UpID,OverID
 	mov hGen,eax
@@ -220,11 +243,15 @@ invoke AnimateWindow,hWin,800,AW_CENTER
 .elseif uMsg == WM_CTLCOLORBTN
       invoke CreateSolidBrush, 000000FFh
       ret
+      .elseif uMsg == IDC_SERIAL
+invoke SetCursor,hCursor
 .elseif uMsg==WM_LBUTTONDOWN
+		invoke SetCursor,hCursor
 		mov MoveDlg,TRUE
 		invoke SetCapture,hWin
 		invoke GetCursorPos,addr OldPos	
-.elseif uMsg==WM_MOUSEMOVE		
+.elseif uMsg==WM_MOUSEMOVE
+invoke SetCursor,hCursor
 	.if MoveDlg==TRUE
 		invoke GetWindowRect,hWin,addr Rect
 		invoke GetCursorPos,addr NewPos
@@ -245,6 +272,7 @@ invoke AnimateWindow,hWin,800,AW_CENTER
 		invoke MoveWindow,hWin,eax,ebx,ecx,edx,TRUE
 	.endif
 .elseif uMsg==WM_LBUTTONUP
+		invoke SetCursor,hCursor
 		mov MoveDlg,FALSE
 		invoke ReleaseCapture
 .elseif	uMsg == WM_COMMAND
@@ -263,6 +291,33 @@ invoke AnimateWindow,hWin,800,AW_CENTER
 .elseif	wParam == IDC_ABOUT
 			invoke DialogBoxParam, hInstance, 102, hWin, addr Aboutproc, NULL 
 		.endif
+.elseif uMsg == WM_LBUTTONDBLCLK
+invoke SetCursor,hCursor
+
+.elseif uMsg == WM_LBUTTONUP
+invoke SetCursor,hCursor
+
+.elseif uMsg == WM_RBUTTONDBLCLK
+invoke SetCursor,hCursor
+
+.elseif uMsg == WM_RBUTTONDOWN
+invoke SetCursor,hCursor
+
+.elseif uMsg == WM_RBUTTONUP
+invoke SetCursor,hCursor
+
+.elseif uMsg == WM_MOUSEMOVE
+invoke SetCursor,hCursor
+
+.elseif uMsg == WM_MBUTTONDBLCLK
+invoke SetCursor,hCursor
+
+.elseif uMsg == WM_MBUTTONDOWN
+invoke SetCursor,hCursor
+
+.elseif uMsg == WM_MBUTTONUP
+invoke SetCursor,hCursor
+
 .elseif	uMsg == WM_CLOSE
 		invoke uFMOD_PlaySong,0,0,0
     	invoke DeleteObject,hPen
@@ -275,34 +330,53 @@ invoke AnimateWindow,hWin,800,AW_CENTER
 		ret
 DlgProc	endp
 
+EditCustomCursor	proc	hWin:DWORD,uMsg:DWORD,wParam:DWORD,lParam:DWORD
+	
+.if uMsg==WM_SETCURSOR
+invoke SetCursor,hCursor
+.else
+invoke CallWindowProc,OldWndProc,hWin,uMsg,wParam,lParam
+ret
+.endif
+	
+xor eax,eax
+ret
+	
+	Ret
+EditCustomCursor EndP
+
+EditCustomCursor2	proc	hWin:DWORD,uMsg:DWORD,wParam:DWORD,lParam:DWORD
+	
+.if uMsg==WM_SETCURSOR
+invoke SetCursor,hCursor
+.else
+invoke CallWindowProc,OldWndProc2,hWin,uMsg,wParam,lParam
+ret
+.endif
+	
+xor eax,eax
+ret
+	
+	Ret
+EditCustomCursor2 EndP
+
 DoKey	proc	hWnd:DWORD
 ; #########################################################################
 ; ################ (¯`·._.·[ Put your algo here ! ]·._.·´¯) ###############
 ; #########################################################################
-invoke GetTickCount
-mov eax,7
-mov eax,NameLen
+
+mov ecx,NameLen
 lea ebx,NameBuffer
-mov edx,012345678h
+xor edx,edx
+lea edx,FinalSerial
 xor ecx,ecx
 
 @@:
 mov cl,byte ptr ds:[eax+ebx-1]
-xor cl,078h
-not cl
-add cl,088h
-imul edx,ecx
-add edx,1b4h
+mov byte ptr ds:[edx],cl
+inc edx
 dec eax
 jnz @b
-
-add edx,087654321h
-neg edx
-
-push edx
-push offset Format
-push offset FinalSerial
-call wsprintf
 
 invoke SetDlgItemText,hWnd,IDC_SERIAL,addr FinalSerial
 invoke SetClipboard,addr FinalSerial
@@ -332,7 +406,26 @@ Aboutproc proc hWin:DWORD,uMsg:DWORD,wParam:DWORD,lParam:DWORD
 		call	ScrollMain
 		call	UpdateScroll
 .elseif eax==WM_LBUTTONDOWN
+		invoke SetCursor,hCursor
 		invoke SendMessage,hWin,WM_NCLBUTTONDOWN,HTCAPTION,0
+.elseif eax==WM_LBUTTONDBLCLK
+invoke SetCursor,hCursor
+.elseif eax==WM_LBUTTONUP
+invoke SetCursor,hCursor
+.elseif eax==WM_RBUTTONDBLCLK
+invoke SetCursor,hCursor
+.elseif eax==WM_RBUTTONDOWN
+invoke SetCursor,hCursor
+.elseif eax==WM_RBUTTONUP
+invoke SetCursor,hCursor
+.elseif eax==WM_MOUSEMOVE
+invoke SetCursor,hCursor
+.elseif eax==WM_MBUTTONDBLCLK
+invoke SetCursor,hCursor
+.elseif eax==WM_MBUTTONDOWN
+invoke SetCursor,hCursor
+.elseif eax==WM_MBUTTONUP
+invoke SetCursor,hCursor
 .elseif	eax == WM_CLOSE
 		invoke	EndDialog, hWin, 0
 	.endif
