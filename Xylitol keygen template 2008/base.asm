@@ -1,14 +1,27 @@
-; Date: 19/08/2014
-; Desc: Il s'agit d'un modèle de keygenerator que vous pouvez librement réutiliser, par exemple pour vos solutions de crackmes...
-; Aucune routine de génération pour une application commerciale quelconque n'a été incluse.
-; Cette source est une donnation du groupe RED CReW.
-; Le code inclut un exemple d'implémentation de player de modules XM, d'utilisation de la PNGLib et également d'un scroller horizontal/vertical.
+; =========================================================================
+; -------------------------------------------------------------------------
+;     FILENAME : base.asm
+; -------------------------------------------------------------------------
+;       AUTHOR : Xylitol
+;        EMAIL : xylitolâ˜†temari.fr
+; DATE CREATED : 29/08/2014
+;         SIZE : 800Kb - (Depend of your XM module size!)
+;  DESCRIPTION : Il s'agit d'un modÃ¨le de keygenerator que vous pouvez
+;				 librement rÃ©utiliser, par exemple pour vos solutions
+;				 de crackmes...
+;				 Aucune routine de gÃ©nÃ©ration pour une application
+;				 commerciale quelconque n'a Ã©tÃ© incluse.
+; -------------------------------------------------------------------------
+;            Cette source est une donnation du groupe RED CReW.          
+; -------------------------------------------------------------------------
+; =========================================================================
 
+; ---- skeleton -----------------------------------------------------------
 .486
 .model	flat, stdcall
 option	casemap :none ; case sensitive
 
-; Include files
+; ---- Include ------------------------------------------------------------
 include \masm32\include\windows.inc
 include \masm32\include\user32.inc
 include \masm32\include\kernel32.inc
@@ -34,7 +47,7 @@ includelib		Libs\ufmod.lib
 include			Libs\pnglib.inc
 includelib		Libs\pnglib.lib
 
-include Libs\btnt.inc
+include			Libs\btnt.inc
 
 DlgProc			PROTO :DWORD,:DWORD,:DWORD,:DWORD
 Aboutproc		PROTO :DWORD,:DWORD,:DWORD,:DWORD
@@ -55,9 +68,9 @@ ID_FONT			equ	2000
 IDC_GENZ		equ 1300
 IDC_ABOUT		equ 1301
 IDC_EXIT		equ 1302
-;Scroller Text Transparency
-TRANSPARENT_VALUE	 equ 210
+TRANSPARENT_VALUE	 equ 210 ;Scroller Text Transparency
 
+; ---- Initialized data ---------------------------------------------------
 .data
 TooLong			db	"Your name is too long !",0
 TooShort		db	"Your name is too short !",0
@@ -72,7 +85,7 @@ Rect				RECT		<>
 rect				RECT		<>
 rect2				RECT		<>
 
-;About Settings ###########################################################
+; ---- About Settings -----------------------------------------------------
 String   	db 'RED CReW',0Ah
 		db 'Proudly presents',0Ah
 		db 0Ah		
@@ -124,15 +137,15 @@ dword_40DCC4	dd 0
 dword_40D4F0	dd 0
 dword_40D4F4	dd 0
 				dd 1F3h	dup(0)
-; #########################################################################
 
+; ---- Uninitialized data -------------------------------------------------
 .data?
 hCursor			dd	?
 scr				SCROLLER_STRUCT <>
 lf				LOGFONT<>
 hFontRes		dd		?
 ptrFont			dd		?
-;About Settings ###########################################################
+; ---- About Settings -----------------------------------------------------
 handle			dd		?
 serBuffer		db 		512 dup(?)
 hBrushBack		HWND ?
@@ -148,7 +161,7 @@ dword_40E508	dd	?
 dword_40E50C	dd	?
 GoDown	  		db	?
 dword_40E504	dd	?
-; #########################################################################
+; -------------------------------------------------------------------------
 NameBuffer		db	100 dup(?)
 FinalSerial		db	100 dup(?)
 NameLen			dd	?
@@ -167,7 +180,8 @@ AllowSingleInstance MACRO lpTitle
           ret
         @@:
       ENDM
-      
+
+; ---- Code ---------------------------------------------------------------
 .code
 start:
 	invoke	GetModuleHandle, NULL
@@ -177,7 +191,6 @@ start:
 	mov hCursor,eax
 	invoke	DialogBoxParam, hInstance, 101, 0, ADDR DlgProc, 0
 	invoke	ExitProcess, eax
-; -----------------------------------------------------------------------
 
 DlgProc	proc hWin:DWORD, uMsg:DWORD, wParam:DWORD, lParam:DWORD
 local hdc:HDC
@@ -218,7 +231,7 @@ invoke AnimateWindow,hWin,800,AW_CENTER
 		invoke CreateFontIndirect,addr lfFont
 		mov scr.scroll_hFont,eax
 
-; Text Scroller ###########################################################
+; ---- Text Scroller ------------------------------------------------------
         m2m scr.scroll_hwnd,hWin
 		mov scr.scroll_text,chr$("RED CREW is PROUD 2 PRESENTS another fine release for - SomeApp v1.0 - keygenned by Someone, GFX: xsp!d3r, SFX: Logic World by Kyze - gr8tz fly to qpt^J, xsp!d3r, KKR, Encrypto, BytePlayeR, and to my spiritual family... :]          Xyl2k signing out !")
 		mov scr.scroll_x,5
@@ -227,7 +240,7 @@ invoke AnimateWindow,hWin,800,AW_CENTER
 		mov scr.scroll_alpha,TRANSPARENT_VALUE
 		mov scr.scroll_textcolor,0FCDC7Ch
 		invoke CreateScroller,addr scr
-; #########################################################################
+; -------------------------------------------------------------------------
 .elseIF uMsg == WM_CTLCOLORDLG
 		mov eax,wParam
 		invoke SetBkColor,eax,Black
@@ -361,7 +374,7 @@ EditCustomCursor2 EndP
 
 DoKey	proc	hWnd:DWORD
 ; #########################################################################
-; ################ (¯`·._.·[ Put your algo here ! ]·._.·´¯) ###############
+; ################ (Â¯`Â·._.Â·[ Put your algo here ! ]Â·._.Â·Â´Â¯) ###############
 ; #########################################################################
 
 mov ecx,NameLen
