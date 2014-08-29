@@ -59,9 +59,9 @@ IDC_EXIT		equ 1302
 TRANSPARENT_VALUE	 equ 210
 
 .data
-Format			db	"%u",0
 TooLong			db	"Your name is too long !",0
 TooShort		db	"Your name is too short !",0
+szWinTitle		db	"RED Key Generator",0
 nFont			dd	1
 lfFont			LOGFONT	<8,0,0,0,FW_DONTCARE,0,0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,\
 				DEFAULT_QUALITY	,DEFAULT_PITCH or FF_DONTCARE,'ACKNOWLEDGE -BRK-'>
@@ -71,7 +71,6 @@ NewPos				POINT		<>
 Rect				RECT		<>
 rect				RECT		<>
 rect2				RECT		<>
-szWinTitle	db	"RED Key Generator",0
 
 ;About Settings ###########################################################
 String   	db 'RED CReW',0Ah
@@ -173,7 +172,7 @@ AllowSingleInstance MACRO lpTitle
 start:
 	invoke	GetModuleHandle, NULL
 	mov	hInstance, eax
-	AllowSingleInstance addr szWinTitle			;dont allow make multiple window
+	AllowSingleInstance addr szWinTitle ;dont allow make multiple window
 	invoke LoadCursor,hInstance,200
 	mov hCursor,eax
 	invoke	DialogBoxParam, hInstance, 101, 0, ADDR DlgProc, 0
