@@ -1,0 +1,23 @@
+[PROJECT]
+Type=0
+ReleaseCommandLine=
+DebugCommandLine=
+AutoIncFileVersion=0
+RCSilent=0
+PellesTools=0
+[MAKE]
+ActiveBuild=0
+CompileRC=/v
+RCToObj=
+Assemble=/c /coff /Cp /nologo
+Link=/SUBSYSTEM:WINDOWS /RELEASE /VERSION:4.0
+Out=
+DebAssemble=/c /coff /Cp /nologo /Fm /Zi /Zd
+DebLink=/SUBSYSTEM:WINDOWS /DEBUG /VERSION:4.0
+DebOut=
+[FILES]
+1=Str2Dec.asm
+2=Str2Dec.rc
+[SHOWFILE]
+1=000000000000000055030000B10100000000000003000000000000000D
+2=19000000190000006E030000CA01000001000000010000000000000070
