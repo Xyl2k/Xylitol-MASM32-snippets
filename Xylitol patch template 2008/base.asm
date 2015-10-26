@@ -95,7 +95,7 @@ String			db '[. Team RED proudly presents .]',0Ah
 				db 0Ah
 				db 0Ah
 				db 0Ah
-				db 'kEYGEN, cODE, gFX by: ****/RED',0Ah
+				db 'pATCH, cODE, gFX by: ****/RED',0Ah
 				db 'pROTECTION: XXXXX',0Ah
 				db 'sFX: DNA-Groove',0Ah
 				db 0Ah
@@ -302,7 +302,7 @@ invoke AnimateWindow,hWnd,800,AW_CENTER
 
 ; ---- Text Scroller ------------------------------------------------------
         m2m scr.scroll_hwnd,hWnd
-		mov scr.scroll_text,chr$("¤ CrackMe 1.0 *Patch* ¤ by Team RED                                         thx fly out to all my spiritual family and to all my friends out there!                                         see you arround have phun !")
+		mov scr.scroll_text,chr$("¤ CrackMe 1.0 *Patch* ¤ by Team RED                                         Thx fly out to all my spiritual family and to all my friends out there!                                         See you around, have phun!")
 								  
 		mov scr.scroll_x,5
 		mov scr.scroll_y,1
@@ -399,8 +399,8 @@ invoke SetCursor,hCursor
 						.endif
 						invoke WriteFile,hTarget,addr _bytes,_byteSize,addr BytesWritten,FALSE
 					ENDM
-				patch 36445h,WBuffer1,2
-				patch 36ABFh,WBuffer2,2
+				patch PatchOffset1,WBuffer1,2
+				patch PatchOffset2,WBuffer2,2
 				invoke List,hWnd,chr$("File patched.")
 				invoke CloseHandle,hTarget
 			.endif
