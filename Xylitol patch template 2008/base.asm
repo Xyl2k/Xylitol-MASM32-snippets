@@ -145,7 +145,7 @@ String			db '[. Team RED proudly presents .]',0Ah
 				db 0Ah
 				db 0Ah
 				db "Reigning at the peak of it's",0Ah
-				db 'society putrefacted art,',0Ah
+				db 'putrefacted art,',0Ah
 				db 0Ah
 				db 'Left humanity in a desert of sorrow',0Ah
 				db 0Ah
