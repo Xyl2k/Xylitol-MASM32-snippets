@@ -1,0 +1,27 @@
+LIBRARY CSCWCNG
+EXPORTS
+CscCngStatusRead
+CscCngBim
+CscCngCasRefInit
+CscCngClose
+CscCngConfigure
+CscCngControl
+CscCngDispense
+CscCngEco
+CscCngEncryption
+CscCngGetRelease
+CscCngGetTrace
+CscCngInit
+CscCngLock
+CscCngOpen
+CscCngOptimization
+CscCngPowerOff
+CscCngPsm
+CscCngReset
+CscCngSelStatus
+CscCngSelftest
+CscCngService
+CscCngShutter
+CscCngStatistics
+CscCngTransport
+CscCngUnlock
