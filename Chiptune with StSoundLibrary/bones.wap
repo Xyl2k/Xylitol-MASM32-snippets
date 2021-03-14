@@ -1,0 +1,22 @@
+[PROJECT]
+Type=0
+ReleaseCommandLine=
+DebugCommandLine=
+AutoIncFileVersion=0
+RCSilent=0
+PellesTools=0
+[MAKE]
+CompileRC=/v
+RCToObj=
+Assemble=/c /coff /Cp /nologo
+Link=/SUBSYSTEM:WINDOWS /RELEASE /VERSION:4.0
+Out=
+ActiveBuild=0
+DebAssemble=/Zi /Zd /c /coff /Cp /nologo
+DebLink=/SUBSYSTEM:WINDOWS /DEBUG /DEBUGTYPE:CV /VERSION:4.0 /INCREMENTAL:NO
+DebOut=
+[FILES]
+1=bones.asm
+2=bones.rc
+[SHOWFILE]
+1=0000000000000000D00300006D02000000000000010000000000000043
