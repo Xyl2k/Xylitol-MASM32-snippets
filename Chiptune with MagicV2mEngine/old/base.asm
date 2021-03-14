@@ -38,6 +38,7 @@ IDC_IDCANCEL 	equ	1004
 .data
 include sharedsouls.inc ; v2m
 WindowTitle	db "MagicV2mEngine.lib by: Magic_h2001",0
+status 		   dd ?
 
 .data?
 hInstance		dd		?	;dd can be written as dword
@@ -49,25 +50,31 @@ start:
 
 	invoke	DialogBoxParam, hInstance, 101, 0, ADDR DlgProc, 0
 	invoke	ExitProcess, eax
-; -----------------------------------------------------------------------
+
 DlgProc	proc	hWin	:DWORD,
 		uMsg	:DWORD,
 		wParam	:DWORD,
 		lParam	:DWORD
 	.if	uMsg == WM_INITDIALOG
-	invoke SetWindowText, hWin, addr WindowTitle
+    mov status,1 
 	.elseif	uMsg == WM_COMMAND
-		.if	wParam == IDC_OK
-; -----------------------------------------------------------------------
-		invoke  MAGICV2MENGINE_DllMain,hInstance,DLL_PROCESS_ATTACH,0
-		invoke 	V2mPlayStream, addr v2m_Data,TRUE
-; -----------------------------------------------------------------------
+		.if wParam == IDC_OK
+			.if status == 1
+				mov status,0
+				invoke  MAGICV2MENGINE_DllMain,hInstance,DLL_PROCESS_ATTACH,0
+				invoke 	V2mPlayStream, addr v2m_Data,TRUE
+				invoke SetDlgItemText,hWin,IDC_OK,chr$("Stop")
+			.else
+				invoke  V2mStop
+				invoke  MAGICV2MENGINE_DllMain,hInstance,DLL_PROCESS_DETACH,0
+				invoke SetDlgItemText,hWin,IDC_OK,chr$("Play")
+				mov status,1
+		.endif
         .elseif	wParam == IDC_IDCANCEL
-		invoke  V2mStop
-  		invoke  MAGICV2MENGINE_DllMain,hInstance,DLL_PROCESS_DETACH,0
+		invoke	SendMessage, hWin, WM_CLOSE, 0, 0
 		.endif
 	.elseif	uMsg == WM_CLOSE
-		invoke	EndDialog,hWin,0
+		invoke EndDialog,hWin,0
 	.endif
 
 	xor	eax,eax

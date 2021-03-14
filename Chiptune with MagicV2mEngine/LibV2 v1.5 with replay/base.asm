@@ -40,6 +40,7 @@ externdef c theTune:byte
 
 .data
 WindowTitle	db "MagicH's LibV2 v1.5",0
+status 		   dd ?
 
 .data?
 hInstance		dd		?	;dd can be written as dword
@@ -54,24 +55,31 @@ start:
 	invoke	DialogBoxParam, hInstance, 101, 0, ADDR DlgProc, 0
 	invoke	ExitProcess, eax
 ; -----------------------------------------------------------------------
+
 DlgProc	proc	hWin	:DWORD,
 		uMsg	:DWORD,
 		wParam	:DWORD,
 		lParam	:DWORD
 	.if	uMsg == WM_INITDIALOG
-	invoke SetWindowText, hWin, addr WindowTitle
+    mov status,1 
 	.elseif	uMsg == WM_COMMAND
-		.if	wParam == IDC_OK
-; -----------------------------------------------------------------------
-		invoke  V2M_V15_Init,FUNC(GetForegroundWindow),offset theTune,1000,44100,1 ; v2m initialization with current window
-		invoke  V2M_V15_Play,0
-; -----------------------------------------------------------------------
+		.if wParam == IDC_OK
+			.if status == 1
+				mov status,0
+				invoke  V2M_V15_Init,FUNC(GetForegroundWindow),offset theTune,1000,44100,1 ; v2m initialization with current window
+				invoke  V2M_V15_Play,0
+				invoke SetDlgItemText,hWin,IDC_OK,chr$("Stop")
+			.else
+				invoke  V2M_V15_Stop,0
+				invoke  V2M_V15_Close
+				invoke SetDlgItemText,hWin,IDC_OK,chr$("Play")
+				mov status,1
+		.endif
         .elseif	wParam == IDC_IDCANCEL
-			invoke  V2M_V15_Stop,0
-			invoke  V2M_V15_Close
+		invoke	SendMessage, hWin, WM_CLOSE, 0, 0
 		.endif
 	.elseif	uMsg == WM_CLOSE
-		invoke	EndDialog,hWin,0
+		invoke EndDialog,hWin,0
 	.endif
 
 	xor	eax,eax
