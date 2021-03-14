@@ -17,8 +17,10 @@ rem .idata есть только в TASM
   link.exe /SUBSYSTEM:WINDOWS /opt:nowin98 /LIBPATH:"%lib%" "%name%".obj
 :final
   if errorlevel 1 goto End
-   del *.OBJ
+  del *.OBJ
   del *.res
+  del *.lib
+  del *.exp
 :End
  pause
 @echo on
