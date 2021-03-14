@@ -2,16 +2,18 @@
 .model	flat, stdcall
 option	casemap :none
 
-include	windows.inc
+include	\masm32\include\windows.inc
+include cryptohash.inc
+includelib cryptohash.lib
 
 UseLib	MACRO	libname
-	include		libname.inc
-	includelib	libname.lib
+	include		\masm32\include\libname.inc
+	includelib	\masm32\lib\libname.lib
 ENDM
 
 UseLib	user32
 UseLib	kernel32
-UseLib	cryptohash
+
 
 DlgProc		PROTO :DWORD,:DWORD,:DWORD,:DWORD
 

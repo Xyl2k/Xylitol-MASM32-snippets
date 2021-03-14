@@ -13,7 +13,8 @@ include \masm32\include\windows.inc
 include \masm32\include\kernel32.inc
 include \masm32\include\user32.inc
 include	\masm32\include\comctl32.inc	;windows common controls
-	
+include		\masm32\macros\macros.asm
+
 includelib \masm32\lib\kernel32.lib
 includelib \masm32\lib\user32.lib
 includelib	\masm32\lib\comctl32.lib	;windows common controls
@@ -25,7 +26,7 @@ DlgProc		PROTO	:DWORD,:DWORD,:DWORD,:DWORD
 .const
 IDD_MAIN	equ	1000
 IDB_EXIT	equ	1001
-
+IDC_BUTTON1002 equ	1002
 .data?
 hInstance	dd ?
 hRes		dd ?
@@ -33,8 +34,10 @@ lenRes		dd ?
 pMusic		dd ?
 	
 .data
-szFileName	db "YMs\\Union Tcb 2.ym", 0
-ID_MSX		EQU 1001
+szFileName	   db "YMs\\Union Tcb 2.ym", 0
+ID_MSX		   EQU 1001
+IDC_BUTTON1002 equ 1002
+status 		   dd ?
 	
 .code
 start:
@@ -67,17 +70,30 @@ DlgProc proc hWin:DWORD,uMsg:DWORD,wParam:DWORD,lParam:DWORD
 				.endif
 			.endif
 					invoke ymMusicSetLoopMode, pMusic, TRUE
-			invoke ymMusicSoundServerStart, pMusic
-		invoke ymMusicPlay, pMusic
-		
+
+		mov status,1 
 	.elseif eax == WM_COMMAND
 		mov	eax,wParam
 		.if	eax == IDB_EXIT
-				invoke ymMusicSoundServerStop, pMusic
-		invoke ymMusicDestroy, pMusic
+			invoke ymMusicSoundServerStop, pMusic
+			invoke ymMusicDestroy, pMusic
 			invoke	SendMessage, hWin, WM_CLOSE, 0, 0
 		.endif
+		.if eax == IDC_BUTTON1002
+			.if status == 1
+				mov status,0
+				invoke SetDlgItemText,hWin,IDC_BUTTON1002,chr$("Stop")
+				invoke ymMusicSoundServerStart, pMusic
+				invoke ymMusicPlay, pMusic
+			.else
+				invoke SetDlgItemText,hWin,IDC_BUTTON1002,chr$("Play")
+				invoke ymMusicSoundServerStop, pMusic
+				mov status,1
+			.endif
+		.endif
 	.elseif	eax == WM_CLOSE
+		invoke ymMusicSoundServerStop, pMusic
+		invoke ymMusicDestroy, pMusic
 		invoke	EndDialog, hWin, 0
 	.endif
 

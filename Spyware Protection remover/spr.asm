@@ -2,21 +2,21 @@
 .MODEL FLAT, STDCALL 
 OPTION CASEMAP :NONE
 
-		INCLUDE 	WINDOWS.INC 
-		INCLUDE 	USER32.INC 
-		INCLUDE 	KERNEL32.INC 
-		INCLUDE 	ADVAPI32.INC 
+		INCLUDE 	\masm32\include\WINDOWS.INC 
+		INCLUDE 	\masm32\include\USER32.INC 
+		INCLUDE 	\masm32\include\KERNEL32.INC 
+		INCLUDE 	\masm32\include\ADVAPI32.INC 
 		INCLUDE 	CRYPTOHASH.INC
-		INCLUDELIB 	USER32.LIB 
-		INCLUDELIB 	KERNEL32.LIB 
-		INCLUDELIB 	ADVAPI32.LIB 
+		INCLUDELIB 	\masm32\lib\USER32.LIB 
+		INCLUDELIB 	\masm32\lib\KERNEL32.LIB 
+		INCLUDELIB 	\masm32\lib\ADVAPI32.LIB 
 		INCLUDELIB 	CRYPTOHASH.LIB
-		include         gdi32.inc
-include         C:\masm32\macros\macros.asm
+		include     \masm32\include\gdi32.inc
+include             \masm32\macros\macros.asm
 include         WaveObject.asm
-includelib          gdi32.lib
+includelib          \masm32\lib\gdi32.lib
 include		WaveObject.asm
-includelib 		winmm.lib
+includelib 		\masm32\lib\winmm.lib
 include			ufmod.inc
 includelib			ufmod.lib
 

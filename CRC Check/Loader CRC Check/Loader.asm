@@ -2,11 +2,11 @@
 .model flat,stdcall
 option casemap:none
 
-include	windows.inc
+include	\masm32\include\windows.inc
 
 uselib	MACRO	libname
-	include		libname.inc
-	includelib	libname.lib
+	include		\masm32\include\libname.inc
+	includelib	\masm32\lib\libname.lib
 ENDM
 ;Loader by RED CREW
 uselib	user32
@@ -20,7 +20,7 @@ uselib	advapi32
 uselib	comdlg32
 uselib	shell32
 
-include C:\masm32\macros\macros.asm
+include \masm32\macros\macros.asm
 include crc32.inc
 
 crc32check PROTO :DWORD,:DWORD,:DWORD,:DWORD

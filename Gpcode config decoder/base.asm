@@ -3,11 +3,11 @@
 .model  flat, stdcall
 option  casemap :none   ; case sensitive
 
-include windows.inc
+include \masm32\include\windows.inc
 
 uselib  MACRO   libname
-    include     libname.inc
-    includelib  libname.lib
+    include     \masm32\include\libname.inc
+    includelib  \masm32\lib\libname.lib
 ENDM
 
 uselib  user32

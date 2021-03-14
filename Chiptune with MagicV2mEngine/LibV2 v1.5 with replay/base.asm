@@ -12,20 +12,20 @@
 .model	flat, stdcall
 option	casemap :none   ; case sensitive
 
-include		windows.inc 
-include		kernel32.inc 
-include		user32.inc  
-include		winmm.inc
-include		masm32.inc
+include		\masm32\include\windows.inc 
+include		\masm32\include\kernel32.inc 
+include		\masm32\include\user32.inc  
+include		\masm32\include\winmm.inc
+include		\masm32\include\masm32.inc
 
-include     /masm32/macros/macros.asm
-include	msvcrt.inc
+include     \masm32\macros\macros.asm
+include     \masm32\include\msvcrt.inc
 include	V2M_V15.inc
 
-includelib	kernel32.lib
-includelib	user32.lib 
-includelib	winmm.lib
-includelib 	masm32.lib
+includelib	\masm32\lib\kernel32.lib
+includelib	\masm32\lib\user32.lib 
+includelib	\masm32\lib\winmm.lib
+includelib 	\masm32\lib\masm32.lib
 
 includelib	V2M_V15.lib
 includelib	msvcrt.lib

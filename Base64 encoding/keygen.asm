@@ -1,23 +1,25 @@
 .686
 .model flat, stdcall
 option casemap :none
-include windows.inc
-include kernel32.inc
-includelib kernel32.lib
-include user32.inc
-includelib user32.lib
-include cryptohash.inc
-includelib cryptohash.lib
+include     \masm32\include\windows.inc
+include     \masm32\include\kernel32.inc
+include     \masm32\include\user32.inc
+include     \masm32\include\comctl32.inc
+include     \masm32\include\gdi32.inc
+include     \masm32\macros\macros.asm
 
-include comctl32.inc
-includelib comctl32.lib
-include         gdi32.inc
-include         C:\masm32\macros\macros.asm
-include         WaveObject.asm
-includelib      gdi32.lib
-includelib 		winmm.lib
-include			ufmod.inc
-includelib			ufmod.lib
+includelib \masm32\lib\kernel32.lib
+includelib \masm32\lib\user32.lib
+includelib \masm32\lib\comctl32.lib
+includelib \masm32\lib\gdi32.lib
+includelib \masm32\lib\winmm.lib
+
+include    WaveObject.asm
+
+include    cryptohash.inc
+includelib cryptohash.lib
+include    ufmod.inc
+includelib ufmod.lib
 
 DlgProc     PROTO :DWORD,:DWORD,:DWORD,:DWORD
 MakeDialogTransparent	PROTO :DWORD,:DWORD

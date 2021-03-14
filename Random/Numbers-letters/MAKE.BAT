@@ -1,8 +1,8 @@
 @echo off
 set path=\masm32\bin
 set lib=\masm32\lib
-set name=bones
-set rsrc=bones
+set name=keygen
+set rsrc=keygen
 
 rc "%rsrc%".rc
 ml.exe /c /coff /Cp /nologo "%name%".asm
@@ -17,10 +17,8 @@ rem .idata есть только в TASM
   link.exe /SUBSYSTEM:WINDOWS /opt:nowin98 /LIBPATH:"%lib%" "%name%".obj
 :final
   if errorlevel 1 goto End
-   del *.OBJ
+  del *.OBJ
   del *.res
-  del *.exp
-  del bones.lib
 :End
  pause
 @echo on

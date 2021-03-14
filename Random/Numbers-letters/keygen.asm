@@ -2,14 +2,14 @@
 .model	flat, stdcall
 option	casemap :none
 
-include		windows.inc
-include		user32.inc
-include		kernel32.inc
-include		comctl32.inc
+include		\masm32\include\windows.inc
+include		\masm32\include\user32.inc
+include		\masm32\include\kernel32.inc
+include		\masm32\include\comctl32.inc
 
-includelib	user32.lib
-includelib	kernel32.lib
-includelib	comctl32.lib
+includelib	\masm32\lib\user32.lib
+includelib	\masm32\lib\kernel32.lib
+includelib	\masm32\lib\comctl32.lib
 
 DlgProc		PROTO	:DWORD,:DWORD,:DWORD,:DWORD
 GenRandomNumbers	PROTO	:DWORD,:DWORD

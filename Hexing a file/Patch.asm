@@ -2,25 +2,25 @@
 .model	flat, stdcall
 option	casemap :none
 ;https://www.virustotal.com/en/file/ee46e8d727793a9601b51d5e73a675863b65fc0ac4ae41e50c1ff9e1c574efa6/analysis/1398363511/
-include			windows.inc
-include			user32.inc
-include			kernel32.inc
-include			shell32.inc
-include			advapi32.inc
-include			gdi32.inc
-include			comctl32.inc
-include			comdlg32.inc
-include			masm32.inc
-include			/masm32/macros/macros.asm
-includelib		user32.lib
-includelib		kernel32.lib
-includelib		shell32.lib
-includelib		advapi32.lib
-includelib		gdi32.lib
-includelib		comctl32.lib
-includelib		comdlg32.lib
-includelib		masm32.lib
-includelib 		winmm.lib
+include			\masm32\include\windows.inc
+include			\masm32\include\user32.inc
+include			\masm32\include\kernel32.inc
+include			\masm32\include\shell32.inc
+include			\masm32\include\advapi32.inc
+include			\masm32\include\gdi32.inc
+include			\masm32\include\comctl32.inc
+include			\masm32\include\comdlg32.inc
+include			\masm32\include\masm32.inc
+include			\masm32\macros\macros.asm
+includelib		\masm32\lib\user32.lib
+includelib		\masm32\lib\kernel32.lib
+includelib		\masm32\lib\shell32.lib
+includelib		\masm32\lib\advapi32.lib
+includelib		\masm32\lib\gdi32.lib
+includelib		\masm32\lib\comctl32.lib
+includelib		\masm32\lib\comdlg32.lib
+includelib		\masm32\lib\masm32.lib
+includelib 		\masm32\lib\winmm.lib
 include		WaveObject.asm
 include			ufmod.inc
 includelib			ufmod.lib

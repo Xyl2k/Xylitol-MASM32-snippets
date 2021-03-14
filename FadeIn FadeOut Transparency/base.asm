@@ -2,13 +2,13 @@
 .model	flat, stdcall
 option	casemap :none   ; case sensitive
 
-include	windows.inc
-include user32.inc
-include kernel32.inc
+include	\masm32\include\windows.inc
+include \masm32\include\user32.inc
+include \masm32\include\kernel32.inc
 
-includelib user32.lib
-includelib kernel32.lib
-include C:\masm32\macros\macros.asm
+includelib \masm32\lib\user32.lib
+includelib \masm32\lib\kernel32.lib
+include  \masm32\macros\macros.asm
 
 DlgProc		PROTO :DWORD,:DWORD,:DWORD,:DWORD
 FadeIn      		proto		:DWORD
