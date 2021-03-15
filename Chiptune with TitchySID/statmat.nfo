@@ -1,0 +1,18 @@
+ __________________________________________
+ TitchySID Library v1.1 (6th August 2008) 
+ ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ __________________________________________
+              Release Info                
+ ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ TitchySID is a library written in MASM32
+ that plays SID chiptunes from the Commodore
+ 64. It currently only supports PSID format
+ files, but it is hoped that other formats
+ will be added in the future. It aims to be
+ the smallest SID player library available
+ and to be added easily to any development
+ project on Microsoft platforms.
+ __________________________________________
+  Team StatMat - only one member needed!  
+ ¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯¯
+ 
