@@ -5,15 +5,14 @@ option	casemap :none   ; case sensitive
 include	\masm32\include\windows.inc
 include \masm32\include\user32.inc
 include \masm32\include\kernel32.inc
-include		\masm32\macros\macros.asm
+include	\masm32\macros\macros.asm
 
 includelib \masm32\lib\user32.lib
 includelib \masm32\lib\kernel32.lib
-include  \masm32\macros\macros.asm
+includelib \masm32\lib\winmm.lib
 
-includelib 		\masm32\lib\winmm.lib
-include			ufmod.inc
-includelib		ufmod.lib
+include		ufmod.inc
+includelib	ufmod.lib
 
 
 DlgProc		PROTO :DWORD,:DWORD,:DWORD,:DWORD
@@ -33,7 +32,7 @@ start:
 	mov	hInstance, eax
 	invoke	DialogBoxParam, hInstance, 101, 0, ADDR DlgProc, 0
 	invoke	ExitProcess, eax
-; -----------------------------------------------------------------------
+
 DlgProc	proc	hWin	:DWORD,
 		uMsg	:DWORD,
 		wParam	:DWORD,
