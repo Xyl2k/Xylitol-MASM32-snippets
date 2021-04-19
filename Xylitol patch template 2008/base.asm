@@ -80,7 +80,7 @@ TRANSPARENT_VALUE    equ  210 ;Scroller Text Transparency
 .data
 ; Patch texts
 szWinTitle           db  "RED Patch",0
-szNotFound           db  "AVSVideoConverter.exe non trouvé",0
+szNotFound           db  "Crackme.exe not found",0
 szWrongSize          db  "Bad size !",0
 szSizeOK             db  "Size: OK!",0
 szOKCRC32            db  "CRC32: OK!",0
@@ -95,8 +95,8 @@ StartNfo2            db  "Place in same folder as target and click PATCH",0
 ; App details
 TargetName           db  "Crackme.exe",0
 BackupName           db  "Crackme.exe.RED",0
-TargetCRC32          dd  0E9984D32h ; CRC32 of AVSVideoConverter.exe
-TargetSize           dd  21531440 ; File size of AVSVideoConverter.exe
+TargetCRC32          dd  0E9984D32h ; CRC32 of Crackme.exe
+TargetSize           dd  21531440 ; File size of Crackme.exe
 
 ; Patch positions
 WBuffer1             db  0EBh,008h
