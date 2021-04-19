@@ -4,248 +4,267 @@
 option	casemap :none ; case sensitive
 
 ; ---- Include ------------------------------------------------------------
-include				\masm32\include\windows.inc
-include				\masm32\include\user32.inc
-include				\masm32\include\kernel32.inc
-include				\masm32\include\masm32.inc
-include				\masm32\include\comdlg32.inc
-include				\masm32\include\gdi32.inc
-include				\masm32\macros\macros.asm
+include             \masm32\include\windows.inc
+include             \masm32\include\user32.inc
+include             \masm32\include\kernel32.inc
+include             \masm32\include\masm32.inc
+include             \masm32\include\comdlg32.inc
+include             \masm32\include\gdi32.inc
+include             \masm32\macros\macros.asm
 
-includelib			\masm32\lib\winmm.lib
-includelib			\masm32\lib\comdlg32.lib
-includelib			\masm32\lib\user32.lib
-includelib			\masm32\lib\kernel32.lib
-includelib			\masm32\lib\masm32.lib
-includelib			\masm32\lib\gdi32.lib
+includelib          \masm32\lib\winmm.lib
+includelib          \masm32\lib\comdlg32.lib
+includelib          \masm32\lib\user32.lib
+includelib          \masm32\lib\kernel32.lib
+includelib          \masm32\lib\masm32.lib
+includelib          \masm32\lib\gdi32.lib
 
 ; Text Scroll Effects
-include				Libs\TextScroller.inc
-includelib			Libs\TextScroller.lib
+include             Libs\TextScroller.inc
+includelib          Libs\TextScroller.lib
 ; Music
-include				Libs\ufmod.inc
-includelib			Libs\ufmod.lib
+include             Libs\ufmod.inc
+includelib          Libs\ufmod.lib
 ; Lib for buttons
-include				Libs\pnglib.inc
-includelib			Libs\pnglib.lib
-include				Libs\btnt.inc
+include             Libs\pnglib.inc
+includelib          Libs\pnglib.lib
+include             Libs\btnt.inc
 
 ; CRC Check
-include 			Libs\crc32.inc
+include             Libs\crc32.inc
 
-DlgProc				PROTO:DWORD,:DWORD,:DWORD,:DWORD
-Aboutproc			PROTO:DWORD,:DWORD,:DWORD,:DWORD
-List				PROTO:DWORD,:DWORD
-Patch				PROTO:DWORD
+DlgProc             PROTO:DWORD,:DWORD,:DWORD,:DWORD
+Aboutproc           PROTO:DWORD,:DWORD,:DWORD,:DWORD
+List                PROTO:DWORD,:DWORD
+Patch               PROTO:DWORD
 
-icon				equ	1002
-IDC_OK 				equ	1003
-IDC_IDCANCEL 		equ	1004
-IDC_SERIAL			equ 1007
-IDC_MUSIC			equ 1008
-SCROLLER_BG			equ 1009
-ID_FONT				equ	2000
-IDC_GENZ			equ 1300
-IDC_ABOUT			equ 1301
-IDC_EXIT			equ 1302
-IDC_LISTBOX			equ	1002
-IDC_CHECKBOX		equ	1006
-TRANSPARENT_VALUE	equ 210 ;Scroller Text Transparency
+patch MACRO offsetAdr,_bytes,_byteSize
+ invoke SetFilePointer,hTarget,offsetAdr,NULL,FILE_BEGIN
+   .if eax==0FFFFFFFFh
+     invoke CloseHandle,hTarget
+     invoke List,hWnd,addr szFileBusy
+     ret
+   .endif
+ invoke WriteFile,hTarget,addr _bytes,_byteSize,addr BytesWritten,FALSE
+ENDM
+
+AllowSingleInstance MACRO lpTitle
+invoke FindWindow,NULL,lpTitle
+cmp eax, 0
+ je @F
+   push eax
+   invoke ShowWindow,eax,SW_RESTORE
+   pop eax
+   invoke SetForegroundWindow,eax
+   mov eax, 0
+   ret
+ @@:
+ENDM
+
+.const
+icon                 equ  1002
+IDC_OK               equ  1003
+IDC_IDCANCEL         equ  1004
+IDC_SERIAL           equ  1007
+IDC_MUSIC            equ  1008
+SCROLLER_BG          equ  1009
+ID_FONT              equ  2000
+IDC_GENZ             equ  1300
+IDC_ABOUT            equ  1301
+IDC_EXIT             equ  1302
+IDC_LISTBOX          equ  1002
+IDC_CHECKBOX         equ  1006
+TRANSPARENT_VALUE    equ  210 ;Scroller Text Transparency
 
 ; ---- Initialized data ---------------------------------------------------
 .data
-szWinTitle		db	"RED Patch",0
-TargetName		db		"Crackme.exe",0
-BackupName		db		"Crackme.exe.RED",0
+; Patch texts
+szWinTitle           db  "RED Patch",0
+szNotFound           db  "AVSVideoConverter.exe non trouvÃ©",0
+szWrongSize          db  "Bad size !",0
+szSizeOK             db  "Size: OK!",0
+szOKCRC32            db  "CRC32: OK!",0
+szBadCRC32           db  "CRC32 incorrect!",0
+szFileBusy           db  "File busy",0
+szBckOK              db  "Backup: OK!",0
+szNoBck              db  "Backup: No backup!",0
+szSucess             db  "PATCHED !",0
+StartNfo1            db  "Patch for: XXXXX v1.0",0
+StartNfo2            db  "Place in same folder as target and click PATCH",0
 
-WBuffer1		db		0EBh,008h
-PatchOffset1	dd		00036445h
+; App details
+TargetName           db  "Crackme.exe",0
+BackupName           db  "Crackme.exe.RED",0
+TargetCRC32          dd  0E9984D32h ; CRC32 of AVSVideoConverter.exe
+TargetSize           dd  21531440 ; File size of AVSVideoConverter.exe
 
-WBuffer2		db		090h,090h
-PatchOffset2	dd		00036ABFh 
-
-TargetCRC32  	dd 		262A849Ch ;CRC of the file
-
-StartNfo1		db		"Patch for: XXXXX v1.0",0
-StartNfo2		db		"Place in same folder as target and click PATCH",0
-Backup			db		"Backup made",0
-szTitle			db		'Error',0
-szError			db		'An error has occured',0
+; Patch positions
+WBuffer1             db  0EBh,008h
+PatchOffset1         dd  00036445h
+WBuffer2             db  090h,090h
+PatchOffset2         dd  00036ABFh 
 
 
-nFont			dd	1
-MoveDlg			BOOL		?
-OldPos			POINT		<>
-NewPos			POINT		<>
-Rect			RECT		<>
-rect			RECT		<>
-rect2			RECT		<>
-lfFont			LOGFONT	<8,0,0,0,FW_DONTCARE,0,0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,\
-				DEFAULT_QUALITY	,DEFAULT_PITCH or FF_DONTCARE,'ACKNOWLEDGE -BRK-'>
+nFont                dd     1
+MoveDlg              BOOL   ?
+OldPos               POINT  <>
+NewPos               POINT  <>
+Rect                 RECT   <>
+rect                 RECT   <>
+rect2                RECT   <>
+lfFont               LOGFONT <8,0,0,0,FW_DONTCARE,0,0,0,DEFAULT_CHARSET,OUT_DEFAULT_PRECIS,CLIP_DEFAULT_PRECIS,\
+                     DEFAULT_QUALITY,DEFAULT_PITCH or FF_DONTCARE,'ACKNOWLEDGE -BRK-'>
 
 ; ---- About Settings -----------------------------------------------------
-String			db '[. Team RED proudly presents .]',0Ah
-				db 'another quality release...',0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db '. . .',0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 'pATCH, cODE, gFX by: ****/RED',0Ah
-				db 'pROTECTION: XXXXX',0Ah
-				db 'sFX: DNA-Groove',0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 'I would like to thank all my friends',0Ah
-				db 'in RED crew for the good times',0Ah
-				db 'and all the ppl in the scene who',0Ah
-				db 'bring quality release...!',0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 'Once upon a time',0Ah
-				db 'in a world of insects,',0Ah
-				db 0Ah
-				db 0Ah
-				db 'A particular species rose from',0Ah
-				db 'the dark.',0Ah
-				db 0Ah
-				db 0Ah
-				db 'Everyday developing better',0Ah
-				db 'knowledge to rule the society,',0Ah
-				db 0Ah
-				db 0Ah
-				db "Expressing all it's mediocrity",0Ah
-				db 'in this filthy world.',0Ah
-				db 0Ah
-				db 0Ah
-				db "Reigning at the peak of it's",0Ah
-				db 'putrefacted art,',0Ah
-				db 0Ah
-				db 'Left humanity in a desert of sorrow',0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db '. . .',0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 'What insect are you ?',0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db '.IF you are reading this crap,',0Ah
-				db 'then i can say',0Ah
-				db '* Welcome to my world! *',0Ah
-				db 0Ah
-				db 'SEE YOU AT TOP #1... :p',0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db 0Ah
-				db "Temari, you're my soul",0Ah
-				db 0Ah,0
-		aTahoma	db 'Lucida Console',0
+String               db '[. Team RED proudly presents .]',0Ah
+                     db 'another quality release...',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db '. . .',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 'pATCH, cODE, gFX by: ****/RED',0Ah
+                     db 'pROTECTION: XXXXX',0Ah
+                     db 'sFX: DNA-Groove',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 'I would like to thank all my friends',0Ah
+                     db 'in RED crew for the good times',0Ah
+                     db 'and all the ppl in the scene who',0Ah
+                     db 'bring quality release...!',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 'Once upon a time',0Ah
+                     db 'in a world of insects,',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 'A particular species rose from',0Ah
+                     db 'the dark.',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 'Everyday developing better',0Ah
+                     db 'knowledge to rule the society,',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db "Expressing all it's mediocrity",0Ah
+                     db 'in this filthy world.',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db "Reigning at the peak of it's",0Ah
+                     db 'putrefacted art,',0Ah
+                     db 0Ah
+                     db 'Left humanity in a desert of sorrow',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db '. . .',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 'What insect are you ?',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db '.IF you are reading this crap,',0Ah
+                     db 'then i can say',0Ah
+                     db '* Welcome to my world! *',0Ah
+                     db 0Ah
+                     db 'SEE YOU AT TOP #1... :p',0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db 0Ah
+                     db "Temari, you're my soul",0Ah
+                     db 0Ah,0
+             aTahoma db 'Lucida Console',0
 
-hFont			dd 0
-dword_40E510	dd 0
-number			dd 0 
-dword_40CCA0	dd 0
-dword_40CCA4	dd 0
-dword_40CCB8	dd 0
-dword_40CD24	dd 0
-				dd 1F2h	dup(0)
-dword_40DCC4	dd 0
-				dd 1F3h	dup(0)
-dword_40D4F0	dd 0
-dword_40D4F4	dd 0
-				dd 1F3h	dup(0)
+hFont                dd 0
+dword_40E510         dd 0
+number               dd 0 
+dword_40CCA0	     dd 0
+dword_40CCA4	     dd 0
+dword_40CCB8	     dd 0
+dword_40CD24	     dd 0
+                     dd 1F2h dup(0)
+dword_40DCC4         dd 0
+                     dd 1F3h dup(0)
+dword_40D4F0	     dd 0
+dword_40D4F4         dd 0
+                     dd 1F3h dup(0)
 
 ; ---- Uninitialized data -------------------------------------------------
 .data?
-hCursor			dd	?
-scr				SCROLLER_STRUCT <>
-lf				LOGFONT<>
-hFontRes		dd		?
-ptrFont			dd		?
+hCursor              dd          ?
+scr                  SCROLLER_STRUCT <>
+lf                   LOGFONT     <>
+hFontRes             dd          ?
+ptrFont              dd          ?
 ; ---- About Settings -----------------------------------------------------
-handle			dd		?
-serBuffer		db 		512 dup(?)
-hBrushBack		HWND ?
-ScrollMainDC	HDC	?
-ScrollBackDC	HDC	?
-Tick	        dd	?
-ScrollBitmap	HBITMAP	?
-dword_40CD18	dd	?
-Paint			PAINTSTRUCT	<>
-dword_40E498	dd	?
-TextLen	      	dd	?
-dword_40E508	dd	?
-dword_40E50C	dd	?
-GoDown	  		db	?
-dword_40E504	dd	?
+handle               dd          ?
+serBuffer            db          512 dup(?)
+hBrushBack           HWND        ?
+ScrollMainDC         HDC         ?
+ScrollBackDC         HDC         ?
+Tick                 dd          ?
+ScrollBitmap         HBITMAP     ?
+dword_40CD18         dd          ?
+Paint                PAINTSTRUCT <>
+dword_40E498         dd          ?
+TextLen              dd          ?
+dword_40E508         dd          ?
+dword_40E50C         dd          ?
+GoDown               db          ?
+dword_40E504         dd          ?
 ; -------------------------------------------------------------------------
+hTarget              HINSTANCE   ?
+BytesWritten         db          ?
 
-hTarget			HINSTANCE	?
-BytesWritten	db		?
-
-AllowSingleInstance MACRO lpTitle
-        invoke FindWindow,NULL,lpTitle
-        cmp eax, 0
-        je @F
-          push eax
-          invoke ShowWindow,eax,SW_RESTORE
-          pop eax
-          invoke SetForegroundWindow,eax
-          mov eax, 0
-          ret
-        @@:
-      ENDM
 
 ; ---- Code ---------------------------------------------------------------
 .code
@@ -271,7 +290,10 @@ local ps:PAINTSTRUCT
 LOCAL pFileMem:DWORD
 LOCAL ff32:WIN32_FIND_DATA
 	.IF uMsg == WM_INITDIALOG
+	; backup
 	invoke SendDlgItemMessage, hWnd, IDC_CHECKBOX, BM_SETCHECK, 1, 0
+	; Init CRC32 table
+   	call InitCRC32Table
 	invoke SetWindowText,hWnd,addr szWinTitle
 invoke uFMOD_PlaySong,IDC_MUSIC,hInstance,XM_RESOURCE
 invoke List,hWnd,addr StartNfo1
@@ -302,7 +324,7 @@ invoke AnimateWindow,hWnd,800,AW_CENTER
 
 ; ---- Text Scroller ------------------------------------------------------
         m2m scr.scroll_hwnd,hWnd
-		mov scr.scroll_text,chr$("¤ CrackMe 1.0 *Patch* ¤ by Team RED                                         Thx fly out to all my spiritual family and to all my friends out there!                                         See you around, have phun!")
+		mov scr.scroll_text,chr$("Â¤ CrackMe 1.0 *Patch* Â¤ by Team RED                                         Thx fly out to all my spiritual family and to all my friends out there!                                         See you around, have phun!")
 								  
 		mov scr.scroll_x,5
 		mov scr.scroll_y,1
@@ -366,45 +388,52 @@ invoke SetCursor,hCursor
 		invoke ReleaseCapture
 .elseIf	uMsg == WM_COMMAND
 	.if	wParam == IDC_GENZ
-		invoke FindFirstFile,ADDR TargetName,ADDR ff32
-		.if eax == INVALID_HANDLE_VALUE
-			invoke List,hWnd,chr$("File not found")
-		.else
-			call InitCRC32Table
-			mov pFileMem,InputFile(ADDR TargetName)
-			invoke CRC32,pFileMem,ff32.nFileSizeLow
-			mov edx,TargetCRC32
-			.if eax != edx
-				invoke List,hWnd,chr$("Checksum fail")
-			.else
-				invoke GetFileAttributes,addr TargetName
-				.if eax!=FILE_ATTRIBUTE_NORMAL
-					invoke SetFileAttributes,addr TargetName,FILE_ATTRIBUTE_NORMAL
-				.endif
-				invoke CreateFile,addr TargetName,GENERIC_READ+GENERIC_WRITE,FILE_SHARE_READ+FILE_SHARE_WRITE,\
-													NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL
-				.if eax!=INVALID_HANDLE_VALUE
-					mov hTarget,eax
-		invoke SendDlgItemMessage,hWnd,IDC_CHECKBOX,BM_GETCHECK,0,0
+        invoke FindFirstFile,ADDR TargetName,ADDR ff32
+        ; File to patch is not in same dir
+        .if eax == INVALID_HANDLE_VALUE
+           invoke List,hWnd,addr szNotFound
+        .else
+        mov eax,TargetSize
+            ; File size is incorrect
+            .if ff32.nFileSizeLow != eax
+                invoke List,hWnd,addr szWrongSize
+            ; Filesize is correct
+            .else
+            invoke List,hWnd,addr szSizeOK
+            mov pFileMem,InputFile(ADDR TargetName)
+            invoke CRC32,pFileMem,ff32.nFileSizeLow
+            mov edx,TargetCRC32
+            ; Calculated CRC32 does not match
+            .if eax != edx
+               invoke List,hWnd,addr szBadCRC32
+            .else
+            invoke List,hWnd,addr szOKCRC32
+            invoke GetFileAttributes,addr TargetName
+            ; The file is read-only, so let's try to set it to read/write
+                .if eax!=FILE_ATTRIBUTE_NORMAL
+                    invoke SetFileAttributes,addr TargetName,FILE_ATTRIBUTE_NORMAL
+                .endif
+              ; Everything's okay, so let's patch the file
+              invoke CreateFile,addr TargetName,GENERIC_READ+GENERIC_WRITE,FILE_SHARE_READ+FILE_SHARE_WRITE,\
+                                                NULL,OPEN_EXISTING,FILE_ATTRIBUTE_NORMAL,NULL
+             .if eax!=INVALID_HANDLE_VALUE
+                    mov hTarget,eax
+            ;Before patching check if backup
+        invoke SendDlgItemMessage,hWnd,IDC_CHECKBOX,BM_GETCHECK,0,0
         .if eax==BST_CHECKED
             invoke CopyFile, addr TargetName, addr BackupName, TRUE
-            invoke List,hWnd,addr Backup
+            invoke List,hWnd,addr szBckOK
+           .else
+            invoke List,hWnd,addr szNoBck
         .endif
-					patch MACRO offsetAdr,_bytes,_byteSize
-					invoke SetFilePointer,hTarget,offsetAdr,NULL,FILE_BEGIN
-						.if eax==0FFFFFFFFh
-							invoke CloseHandle,hTarget
-							invoke List,hWnd,chr$("File not ready!")
-							ret
-						.endif
-						invoke WriteFile,hTarget,addr _bytes,_byteSize,addr BytesWritten,FALSE
-					ENDM
-				patch PatchOffset1,WBuffer1,2
-				patch PatchOffset2,WBuffer2,2
-				invoke List,hWnd,chr$("File patched.")
-				invoke CloseHandle,hTarget
-			.endif
-		.endif
+        ; Start patches to the file
+        patch PatchOffset1,WBuffer1,2
+        patch PatchOffset2,WBuffer2,2
+        invoke CloseHandle,hTarget
+        invoke List,hWnd,addr szSucess
+        .endif
+        .endif
+	.endif
 	.endif
 .elseIf	wParam == IDC_EXIT
 			invoke EndDialog,hWnd,0
