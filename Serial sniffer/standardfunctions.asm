@@ -1,6 +1,12 @@
+; I have no idea of who made that asm file
+; I suppose it was coded by MaRKuS TH-DJM, but i'm unsure.
+; Not all functions are used in this program so if you want
+; to make it smaller just remove the unused parts.
+; i leave you this file "as it"
+
 StatusbarID 				equ 0
 MAXSIZE						equ 100h
-; lib code by MaRKuS TH-DJM
+
 ; Common
 Status				PROTO :DWORD
 Zero				PROTO :DWORD,:DWORD
@@ -111,7 +117,7 @@ MOV EAX,DWORD PTR DS:[ESI+0Ch]
 invoke Hex2Text,eax
 invoke lstrcat,offset exceptionspace,offset exceptionat
 invoke lstrcat,offset exceptionspace,offset hex2textbuffer
-invoke MessageBox,0,offset exceptionspace,offset AppName,MB_OK
+invoke MessageBox,0,offset exceptionspace,offset szTitle,MB_OK
 invoke ExitProcess,0
 
 SetJumpOffset proc uses eax ecx edx edi sourceoffset:DWORD,destinationoffset:DWORD
