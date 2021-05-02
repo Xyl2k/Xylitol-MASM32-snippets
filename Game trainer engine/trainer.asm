@@ -22,17 +22,18 @@ IDB_KILL        equ 1003
 IDB_MONEY       equ 1004
 IDB_NODES       equ 1005
 IDB_SHIPLIFE    equ 1006
-IDC_STATIC1005  equ 1007
-IDC_STATIC1006  equ 1008
-IDC_STATIC1007  equ 1009
-IDC_STATIC1008  equ 1010
-IDC_STATIC1009  equ 1011
-IDC_STATIC1010  equ 1012
-IDC_STATIC1011  equ 1013
-
+IDB_VELOCITY    equ 1007
+IDC_STATIC1005  equ 1008
+IDC_STATIC1006  equ 1009
+IDC_STATIC1007  equ 1010
+IDC_STATIC1008  equ 1011
+IDC_STATIC1009  equ 1012
+IDC_STATIC1010  equ 1013
+IDC_STATIC1011  equ 1014
+IDC_STATIC1012  equ 1015
 .data
 ;Dialog details
-szTitle         db "Dead Space v1.0.0.222 Trainer +6",0 
+szTitle         db "Dead Space v1.0.0.222 Trainer +7",0 
 szIDBCheatON    db "[ENABLE]",0
 szIDBCheatOFF   db "[DISABLE]",0
 szErrorCaption  db "ERROR", 0
@@ -46,6 +47,7 @@ szHotkeyF10     db "F10 - One Hit Kill", 0
 szHotkeyF9      db "F9   - Unlimited credits", 0
 szHotkeyF8      db "F8   - Unlimited nodes", 0
 szHotkeyF7      db "F7   - Unlimited Ship health", 0
+szHotkeyF6      db "F6   - Super speed", 0
 
 ;Game patching details
 ;Tested with Dead.Space-RELOADED
@@ -80,7 +82,7 @@ Offset7         dd 00521610h ; Unlimited nodes
 bytes2write7    db 0E9h,048h,04Dh,0CDh,000h,090h ; JMP 011F635D
 bytes2Restore7  db 08Bh,081h,094h,005h,000h,000h ; MOV EAX,DWORD PTR DS:[ECX+594]
 Offset8         dd 011F635Dh ; Unlimited nodes (codecave)
-bytes2write8    db 0C7h,081h,094h,005h,000h,000h,0F9h,0C7h,004h,000h, ;MOV DWORD PTR DS:[ECX+594],4C7F9
+bytes2write8    db 0C7h,081h,094h,005h,000h,000h,0F9h,0C7h,004h,000h, ;MOV DWORD PTR DS:[ECX+594],04C7F9
                    08Bh,081h,094h,005h,000h,000h,                     ;MOV EAX,DWORD PTR DS:[ECX+594]
                    0E9h,0A4h,0B2h,032h,0FFh                           ;JMP 00521616
 
@@ -94,7 +96,7 @@ bytes2Restore0910 db 0F3h,00Fh,011h,083h,094h,007h,000h,000h ; MOVSS DWORD PTR D
 Offset11          dd 004518DEh ; one hit kill
 bytes2write11     db 0E9h,07Ah,04Ah,0DAh,000h,090h,090h,090h ; JMP 011F635D
 bytes2Restore11   db 0F3h,00Fh,010h,087h,020h,001h,000h,000h ; MOVSS XMM0,DWORD PTR DS:[EDI+120]
-Offset12          dd 011F635Dh ; one hit kill (codecave)
+Offset12          dd 011F6389h ; one hit kill (codecave)
 bytes2write12     db 0C7h,087h,020h,001h,000h,000h,000h,000h,000h,000h, ;MOV DWORD PTR DS:[EDI+120],0
                      0F3h,00Fh,010h,087h,020h,001h,000h,000h,           ;MOVSS XMM0,DWORD PTR DS:[EDI+120]
                      0E9h,072h,0B5h,025h,0FFh                           ;JMP 004518E6
@@ -106,6 +108,17 @@ Offset14          dd 011F6372h ; Unlimited Stasis (codecave)
 bytes2write14     db 0C7h,081h,028h,001h,000h,000h,000h,000h,0C8h,042h, ;MOV DWORD PTR DS:[ECX+128],42C80000
                      0F3h,00Fh,010h,089h,028h,001h,000h,000h,           ;MOVSS XMM1,DWORD PTR DS:[ECX+128]
                      0E9h,043h,00Eh,035h,0FFh                           ;JMP 005471CC
+                     
+Offset15          dd 004644A0h ; Super speed
+bytes2write15     db 0E9h,0FBh,01Eh,0D9h,000h,090h ; JMP 011F63A0
+Offset16          dd 011F63A0h ; Super speed (codecave)
+bytes2write16     db 0C7h,081h,080h,000h,000h,000h,000h,000h,000h,040h, ;MOV DWORD PTR DS:[ECX+80],50000000
+                     0D9h,081h,080h,000h,000h,000h,                     ;FLD DWORD PTR DS:[ECX+80]
+                     0E9h,0F1h,0E0h,026h,0FFh                           ;JMP 004644A6
+;Normal speed is bytes2write17
+bytes2write17     db 0C7h,081h,080h,000h,000h,000h,000h,000h,080h,03Fh, ;MOV DWORD PTR DS:[ECX+80],3F800000
+                     0D9h,081h,080h,000h,000h,000h,                     ;FLD DWORD PTR DS:[ECX+80]
+                     0E9h,0F1h,0E0h,026h,0FFh                           ;JMP 004644A6
 
 .data?
 hInstance       dd ?
@@ -113,12 +126,13 @@ windhand        dd ? ; Window handle
 hwnddlg         dd ? ; Window handle
 phandle         dd ? ; Process handle of game
 pid             dd ? ; Process id of game
-status1		    dd ? ; on/off
-status2		    dd ? ; on/off
-status3		    dd ? ; on/off
-status4		    dd ? ; on/off
-status5		    dd ? ; on/off
-status6		    dd ? ; on/off
+status1         dd ? ; on/off
+status2         dd ? ; on/off
+status3         dd ? ; on/off
+status4         dd ? ; on/off
+status5         dd ? ; on/off
+status6         dd ? ; on/off
+status7         dd ? ; on/off
 
 .code
 start:
@@ -142,6 +156,7 @@ DlgProc	proc    hWin    :DWORD,
         invoke SetDlgItemText,hWin,IDB_MONEY,ADDR szIDBCheatON
         invoke SetDlgItemText,hWin,IDB_NODES,ADDR szIDBCheatON
         invoke SetDlgItemText,hWin,IDB_SHIPLIFE,ADDR szIDBCheatON
+        invoke SetDlgItemText,hWin,IDB_VELOCITY,ADDR szIDBCheatON
         invoke SetDlgItemText,hWin,IDC_STATIC1005,ADDR szHotkeyHelp
         invoke SetDlgItemText,hWin,IDC_STATIC1006,ADDR szHotkeyF12
         invoke SetDlgItemText,hWin,IDC_STATIC1007,ADDR szHotkeyF11
@@ -149,6 +164,7 @@ DlgProc	proc    hWin    :DWORD,
         invoke SetDlgItemText,hWin,IDC_STATIC1009,ADDR szHotkeyF9        
         invoke SetDlgItemText,hWin,IDC_STATIC1010,ADDR szHotkeyF8        
         invoke SetDlgItemText,hWin,IDC_STATIC1011,ADDR szHotkeyF7      
+        invoke SetDlgItemText,hWin,IDC_STATIC1012,ADDR szHotkeyF6 
         mov hwnddlg, eax
         invoke SetTimer,hWin,0,90, 0 ;set the timer for monitoring action keystrokes
         mov status1,0
@@ -157,6 +173,7 @@ DlgProc	proc    hWin    :DWORD,
         mov status4,0
         mov status5,0
         mov status6,0
+        mov status7,0
 	.elseif	uMsg == WM_COMMAND ; Did the user press a button
         .if wParam == IDB_HEALTH
             @HEALTH:
@@ -315,6 +332,31 @@ DlgProc	proc    hWin    :DWORD,
                 invoke MessageBox,hWin,addr szErrorMessage,addr szErrorCaption,MB_ICONERROR
             .endif
         .endif
+        .if wParam == IDB_VELOCITY
+            @VELOCITY:
+            ; Find the game window
+            invoke FindWindow,addr GameClass,addr GameCaption
+            ; The game is running
+            .if eax != NULL
+                .if status7 == 1
+                  mov status7,0 ; Disable
+                  invoke TrainerEngine,offset GameCaption,Offset16,offset bytes2write17,NULL,NULL,21
+                  invoke SetDlgItemText,hWin,IDB_VELOCITY,ADDR szIDBCheatON
+                  invoke Beep,1000,30
+                .else
+                  mov status7,1 ; Enable
+                  invoke TrainerEngine,offset GameCaption,Offset15,offset bytes2write15,NULL,NULL,6
+                  invoke TrainerEngine,offset GameCaption,Offset16,offset bytes2write16,NULL,NULL,21
+                  invoke SetDlgItemText,hWin,IDB_VELOCITY,ADDR szIDBCheatOFF
+                  invoke Beep,5000,30
+                .endif
+            ;If game is not running
+            .else
+                invoke Beep,100,30
+                ; Show the error message
+                invoke MessageBox,hWin,addr szErrorMessage,addr szErrorCaption,MB_ICONERROR
+            .endif
+        .endif
 	.elseif uMsg == WM_TIMER
     invoke GetAsyncKeyState, VK_F12 ; Was F12 pressed?
       .if eax != 0 ; If yes
@@ -339,6 +381,10 @@ DlgProc	proc    hWin    :DWORD,
      invoke GetAsyncKeyState, VK_F7 ; Was F7 pressed?
       .if eax != 0 ; If yes
          jmp @SHIPLIFE
+      .endif
+     invoke GetAsyncKeyState, VK_F6 ; Was F6 pressed?
+      .if eax != 0 ; If yes
+         jmp @VELOCITY
       .endif
 	.elseif	uMsg == WM_CLOSE
         invoke AnimateWindow,hWin,300,AW_BLEND+AW_HIDE 
