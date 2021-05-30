@@ -1,0 +1,26 @@
+[PROJECT]
+Type=0
+ReleaseCommandLine=
+DebugCommandLine=
+AutoIncFileVersion=0
+RCSilent=0
+PellesTools=0
+
+[MAKE]
+CompileRC=/v
+RCToObj=
+Assemble=/c /coff /Cp /nologo
+Link=/SUBSYSTEM:WINDOWS /RELEASE /VERSION:4.0
+Out=
+ActiveBuild=0
+DebAssemble=/Zi /Zd /c /coff /Cp /nologo
+DebLink=/SUBSYSTEM:WINDOWS /DEBUG /DEBUGTYPE:CV /VERSION:4.0 /INCREMENTAL:NO
+DebOut=
+
+
+[FILES]
+1=patch.asm
+2=base.rc
+[SHOWFILE]
+1=11010000F2FFFFFFC7050000380300000000000003000000920000009D
+2=2C0000003A000000650300009602000001000000010000000000000068
