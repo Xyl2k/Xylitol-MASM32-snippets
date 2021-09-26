@@ -23,8 +23,6 @@ IDB_EXIT         equ 1001
 IDC_NAME         equ 1002
 IDC_SERIAL       equ 1005
 IDB_GENERATE     equ 1006
-IDB_ABOUT        equ 1007
-IDI_ICON         equ 100
 MAXSIZE          equ 512
 
 .data
