@@ -1,8 +1,8 @@
 @echo off
 set path=\masm32\bin
 set lib=\masm32\lib
-set name=Searcher
-set rsrc=Searcher
+set name=xordecoder
+set rsrc=xordecoder
 
 rc "%rsrc%".rc
 ml.exe /c /coff /Cp /nologo "%name%".asm
@@ -17,8 +17,8 @@ rem .idata есть только в TASM
   link.exe /SUBSYSTEM:WINDOWS /opt:nowin98 /LIBPATH:"%lib%" "%name%".obj
 :final
   if errorlevel 1 goto End
-  del *.OBJ
-  del *.res
+  del xordecoder.OBJ
+  del xordecoder.res
 :End
  pause
 @echo on
