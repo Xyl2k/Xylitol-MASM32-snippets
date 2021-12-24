@@ -28,6 +28,8 @@ IDC_GROUPBOX_BTN   equ 1007
 IDC_GROUPBOX_BRW   equ 1008
 IDC_PATH           equ 1009
 IDC_TITLE          equ 1010
+IDC_STATIC1011     equ 1011
+IDC_STATIC1012     equ 1012
 
 .data
 ; Browse file stuff
@@ -43,10 +45,12 @@ szIDBExit          db "eXiT!",0
 szIDBBrowse        db "bROWSE!",0
 szIDCbrowse        db "passord.dat",0
 szOurTitle         db "TeraTerm v2.x - v4.x Password Decrypter - from x! Red crew",0
-szIDCGRPBOXbrowse  db "[Filename]",0
+szIDCGRPBOXbrowse  db "[Filename] (drag'n'drop)",0
 szIDCGRPBOXbtn     db "[Control]",0
 szIDCGRPBOXresult  db "Browse file or copy/past",0
 szIDCCoded         db ",@x`;F,XCnb<$7vx1F",0
+szIDCSTCencoded    db "Encoded:",0
+szIDCSTCPlain      db "Plain:",0
 
 .data?
 hInstance          dd ? ;dd can be written as dword
@@ -96,11 +100,14 @@ DlgProc proc hWin   :DWORD,
         invoke SetDlgItemText,hWin,IDC_GROUPBOX_BTN,addr szIDCGRPBOXbtn
         invoke SetDlgItemText,hWin,IDC_GROUPBOX_BRW,addr szIDCGRPBOXbrowse  
         invoke SetDlgItemText,hWin,IDC_CODED,addr szIDCCoded
-        
+        invoke SetDlgItemText,hWin,IDC_STATIC1011,addr szIDCSTCencoded  
+        invoke SetDlgItemText,hWin,IDC_STATIC1012,addr szIDCSTCPlain 
+
       .elseif uMsg == WM_DROPFILES
         invoke DragQueryFile,wParam,NULL,addr szPathBuffer,1024
         invoke SetDlgItemText,hWin,IDC_PATH,addr szPathBuffer
-
+        invoke GetPrivateProfileString,addr szSectionName,addr szkeyNamez,addr szkeynotfound,addr szBrowseResult,ADDR szSize,addr szPathBuffer
+        invoke SetDlgItemText,hWin,IDC_CODED,addr szBrowseResult
       .elseif uMsg == WM_COMMAND
         .if wParam == IDB_DECODE
             invoke GetDlgItemText,hWin,IDC_CODED,addr szCoded,sizeof szCoded
