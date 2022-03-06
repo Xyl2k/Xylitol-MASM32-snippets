@@ -91,7 +91,7 @@ status            dd ?
 .data? 
 ;hInstance HINSTANCE ?
 hCursor           dd ?
-
+hFont             dd ?
 ;Related to algo
 NameBuffer        db 100 dup(?)
 FinalSerial       db 100 dup(?)
@@ -194,7 +194,11 @@ local TypeThread:DWORD
          invoke SetDlgItemText,hWnd,IDC_NAME,addr bufferName
          ;Set focus on IDC_NAME
          invoke GetDlgItem,hWnd,IDC_NAME
-         invoke SetFocus,eax 
+         invoke SetFocus,eax
+         invoke GetDlgItem,hWnd,IDC_NAME
+         invoke SendMessage,eax,WM_SETFONT,hFont,1
+         invoke GetDlgItem,hWnd,IDC_HWID
+         invoke SendMessage,eax,WM_SETFONT,hFont,1
       .elseif uMsg==WM_LBUTTONDOWN 
          invoke SendMessage,hWnd,WM_NCLBUTTONDOWN,HTCAPTION,0
       .elseif uMsg==WM_CTLCOLORDLG
